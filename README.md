@@ -3,11 +3,9 @@ There are some way more sophisiticated configs out there, but most of them didn'
 As a source I suggest you're going to the flexget forums. Which were a great source of information. In many ways better than the official documenation.
 
 Processing of sources:
-RSS Source 
-                    ------> Transmission ----> Filebot ----> Storage
-Rarbg
-kat
-piratebay
+RSS Source ----> Transmission ----> Filebot ----> Storage
+
+Rarbg,kat,piratebay ----> Transmission ----> Filebot ----> Storage
 
 #TV Show
 RSS input from showrss. No particular changes to the stream apart from naming and a specific download path. Which is no requirement for filebot (Author switched from "TheRenamer")
