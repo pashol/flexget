@@ -1,0 +1,108 @@
+templates:
+  clean:
+    clean_transmission:
+      min_ratio: 0
+      transmission_seed_limits: yes
+      enabled: Yes
+    disable: builtins
+  send-android:
+    notifymyandroid:
+      apikey: #add your api key here to get notified after anything new was added to the queue
+  torrent:
+    transmission:
+      main_file_only: yes
+      include_subs: yes
+      rename_like_files: yes
+      ratio: 0
+      skip_files:
+        - '*.nfo'
+        - '*.sfv'
+        - '*.txt'
+        - '*[sS]ample*'
+
+tasks:
+  get-tv:
+    rss: #your showrss feed here. no filtering needed.
+    all_series:
+      propers: no
+    template: 
+      - torrent
+      - send-android
+    thetvdb_lookup: yes
+    set:
+      content_filename: "{{ tvdb_series_name }}.S{{ tvdb_season|pad(2) }}E{{ tvdb_episode|pad(2) }}.{{ tvdb_ep_name|default('Missing title') }}"
+      path: /home/pzotac/Downloads/Torrent/Complete/Series
+
+  #task to pull movies from trakt.tv watchlist and add to the movie queue
+  get-trakt_movies:
+    priority: 1 # run before the movie search task
+    trakt_list:
+      username: #addusername
+      list: watchlist
+      type: movies
+    #imdb_list:
+    #  login: 
+    #  password: 
+    #  list: ShoppingList
+    accept_all: yes
+    seen: yes
+    list_add:
+      - movie_list: traktmovies
+
+  # task that automatically generates an rss feed based on entries from the movie_queue
+  get-movies:
+    priority: 10 # run after the movie queue fill task
+    discover:
+      what:
+        - movie_list: traktmovies
+      from:
+        - rarbg:
+            category: 
+              - x264 720p
+              - x264 1080p
+            sorted_by: seeders
+        - kat:
+            category: movies
+            verified: yes
+        - piratebay:
+            category: "highres movies"
+            sort_by: seeds
+      interval: 4 hours
+    torrent_alive: 5 # Will reject results with less than 10 seeds
+    regexp:
+      reject:
+        - KORSUB
+        - FRENCH
+        - SWESUB
+        - NLSUB
+        - YIFY
+        - russian
+        - trailer
+        - FASTSUB
+        - Tamil
+        - Hindi
+    quality: 720p-1080p webdl+ ac3|mp3|aac # Make sure no screeners or cams are downloaded
+    list_queue: 
+      - movie_list: traktmovies
+    template: 
+      - torrent
+      - send-android
+    tmdb_lookup: yes
+    content_size:
+      min: 700
+      max: 5000
+      strict: no
+    set:
+      path: /home/pzotac/Downloads/Torrent/Complete/Movies
+      content_filename: "{{ tmdb_name}} ({{tmdb_year}})"
+
+schedules:
+  - tasks: '*'
+    interval:
+      minutes: 30
+
+web_server:
+  bind: 0.0.0.0
+  port: 3539
+api: yes
+webui: yes
