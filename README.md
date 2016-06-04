@@ -1,5 +1,6 @@
 # flexget config.yml
-
+There are some way more sophisiticated configs out there, but most of them didn't work for the designed workflow that was tried to achive for this proof of concept.
+As a source I suggest you're going to the flexget forums. Which were a great source of information. In many ways better than the official documenation.
 
 Processing of sources:
 RSS Source 
