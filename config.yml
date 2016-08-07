@@ -7,7 +7,7 @@ templates:
     disable: builtins
   send-android:
     notifymyandroid:
-      apikey: #add your api key here to get notified after anything new was added to the queue
+      apikey: yourapikeyhere
   torrent:
     transmission:
       main_file_only: yes
@@ -22,7 +22,7 @@ templates:
 
 tasks:
   get-tv:
-    rss: #your showrss feed here. no filtering needed.
+    rss: yourshowrssfeedhere
     all_series:
       propers: no
     template: 
@@ -37,13 +37,13 @@ tasks:
   get-trakt_movies:
     priority: 1 # run before the movie search task
     trakt_list:
-      username: #addusername
+      username: yourusernamehere
       list: watchlist
       type: movies
     #imdb_list:
     #  login: 
     #  password: 
-    #  list: ShoppingList
+    #  list: 
     accept_all: yes
     seen: yes
     list_add:
@@ -61,9 +61,6 @@ tasks:
               - x264 720p
               - x264 1080p
             sorted_by: seeders
-        - kat:
-            category: movies
-            verified: yes
         - piratebay:
             category: "highres movies"
             sort_by: seeds
@@ -82,8 +79,10 @@ tasks:
         - Tamil
         - Hindi
     quality: 720p-1080p webdl+ ac3|mp3|aac # Make sure no screeners or cams are downloaded
-    list_queue: 
-      - movie_list: traktmovies
+    list_match:
+      from:
+        - movie_list: traktmovies
+      action: accept
     template: 
       - torrent
       - send-android
@@ -94,7 +93,7 @@ tasks:
       strict: no
     set:
       path: /home/pzotac/Downloads/Torrent/Complete/Movies
-      content_filename: "{{ tmdb_name}} ({{tmdb_year}})"
+      content_filename: "{{tmdb_name}} ({{tmdb_year}})"
 
 schedules:
   - tasks: '*'
