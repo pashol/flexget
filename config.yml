@@ -7,7 +7,7 @@ templates:
     disable: builtins
   send-android:
     notifymyandroid:
-      apikey: yourapikeyhere
+      apikey: <hereapikey>
   torrent:
     transmission:
       main_file_only: yes
@@ -22,7 +22,7 @@ templates:
 
 tasks:
   get-tv:
-    rss: yourshowrssfeedhere
+    rss: <hereshowrssuri>
     all_series:
       propers: no
     template: 
@@ -37,13 +37,13 @@ tasks:
   get-trakt_movies:
     priority: 1 # run before the movie search task
     trakt_list:
-      username: yourusernamehere
+      username: login
       list: watchlist
       type: movies
-    #imdb_list:
-    #  login: 
-    #  password: 
-    #  list: 
+    imdb_list:
+      login: login
+      password: password
+      list: watchlist
     accept_all: yes
     seen: yes
     list_add:
@@ -64,7 +64,16 @@ tasks:
         - piratebay:
             category: "highres movies"
             sort_by: seeds
+        - 1337x:
+            order_by: seeders
+        - limetorrents:
+            category: movies
+            order_by: seeds
+#        - search_rss:
+#            url: https://www.limetorrents.cc/searchrss/{{search_term}}
       interval: 4 hours
+      release_estimations:
+        optimistic: 14 days
     torrent_alive: 5 # Will reject results with less than 10 seeds
     regexp:
       reject:
@@ -94,6 +103,7 @@ tasks:
     set:
       path: /home/pzotac/Downloads/Torrent/Complete/Movies
       content_filename: "{{tmdb_name}} ({{tmdb_year}})"
+
 
 schedules:
   - tasks: '*'
