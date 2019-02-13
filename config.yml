@@ -1,13 +1,4 @@
 templates:
-  clean:
-    clean_transmission:
-      min_ratio: 0
-      transmission_seed_limits: yes
-      enabled: Yes
-    disable: builtins
-  send-android:
-    notifymyandroid:
-      apikey: <hereapikey>
   torrent:
     transmission:
       main_file_only: yes
@@ -19,15 +10,22 @@ templates:
         - '*.sfv'
         - '*.txt'
         - '*[sS]ample*'
+        - 'RARBG.COM.mp4'
+  
+#notify:
+#  entries:
+#    via:
+#      - notifymyandroid:
+#          api_key: a6572f050fd85388e53d456e55925c48ebb8d06f002e74b5
+
 
 tasks:
   get-tv:
-    rss: <hereshowrssuri>
+    rss: <hereyourshowrrs>
     all_series:
       propers: no
     template: 
       - torrent
-      - send-android
     thetvdb_lookup: yes
     set:
       content_filename: "{{ tvdb_series_name }}.S{{ tvdb_season|pad(2) }}E{{ tvdb_episode|pad(2) }}.{{ tvdb_ep_name|default('Missing title') }}"
@@ -37,12 +35,11 @@ tasks:
   get-trakt_movies:
     priority: 1 # run before the movie search task
     trakt_list:
-      username: login
+      username: <hereyourusername>
       list: watchlist
       type: movies
-    imdb_list:
-      login: login
-      password: password
+    imdb_watchlist:
+      user_id: <hereryouruserid>
       list: watchlist
     accept_all: yes
     seen: yes
@@ -64,11 +61,13 @@ tasks:
         - piratebay:
             category: "highres movies"
             sort_by: seeds
-        - 1337x:
-            order_by: seeders
+#        - 1337x:
+#            order_by: seeders
         - limetorrents:
             category: movies
             order_by: seeds
+        - yts: yes
+#        - torrentz: good
 #        - search_rss:
 #            url: https://www.limetorrents.cc/searchrss/{{search_term}}
       interval: 4 hours
@@ -87,6 +86,10 @@ tasks:
         - FASTSUB
         - Tamil
         - Hindi
+        - romanian
+        - arabic
+        - russian
+        - dutch
     quality: 720p-1080p webdl+ ac3|mp3|aac # Make sure no screeners or cams are downloaded
     list_match:
       from:
@@ -94,7 +97,6 @@ tasks:
       action: accept
     template: 
       - torrent
-      - send-android
     tmdb_lookup: yes
     content_size:
       min: 700
@@ -104,6 +106,23 @@ tasks:
       path: /home/pzotac/Downloads/Torrent/Complete/Movies
       content_filename: "{{tmdb_name}} ({{tmdb_year}})"
 
+#  imdb_to_trakt:  # This task adds all the movies in your imdb watchlist to your trakt watchlist
+#    imdb_list:
+#      login: pascal.holzmann@gmail.com
+#      password: Fisch123!
+#      list: watchlist
+#    accept_all: yes
+#    list_add:
+#      - trakt_list:
+#          username: frozenbubble
+#          list: watchlist
+
+  remove stale torrents:
+    from_transmission:
+      only_complete: yes
+    disable: [seen, seen_info_hash]
+    transmission:
+      action: remove
 
 schedules:
   - tasks: '*'
@@ -113,5 +132,4 @@ schedules:
 web_server:
   bind: 0.0.0.0
   port: 3539
-api: yes
-webui: yes
+  web_ui: yes
